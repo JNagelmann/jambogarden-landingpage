@@ -1,27 +1,305 @@
-<!DOCTYPE html>
-<html lang="de">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JamboGarden</title>
-    <style>
-        body {
-            background-color: #dfba80;
-            color: #000000;
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JamboGarden</title>
+<meta name="description" content="JamboGarden – Vision. Solution.. it flies!">
+<meta name="theme-color" content="#FAF6EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A1C" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22-44%20-44%2088%2088%22%20width%3D%2288%22%20height%3D%2288%22%3E%3Ctitle%3EJamboGarden%3C/title%3E%3Ccircle%20r%3D%2240%22%20fill%3D%22%230F6B73%22/%3E%3Ccircle%20cx%3D%2211%22%20cy%3D%22-8%22%20r%3D%2215%22%20fill%3D%22%23E8A33D%22/%3E%3C/svg%3E" type="image/svg+xml">
+<style>
+:root{
+  --bg:#FAF6EE; --ink:#1F2A2C; --teal:#0F6B73; --orbit:#0F6B73; --core:#0F6B73;
+  --sun:#E8A33D; --glow:rgba(232,163,61,.55); --muted:#6E7C7D;
+  --font:"DejaVu Sans","Verdana","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1A1C; --ink:#EDE6D8; --teal:#5FB6BE; --orbit:#3C9AA3; --core:#127A83;
+  --sun:#F0AE48; --glow:rgba(240,174,72,.6); --muted:#8FA1A3; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1A1C; --ink:#EDE6D8; --teal:#5FB6BE; --orbit:#3C9AA3; --core:#127A83;
+  --sun:#F0AE48; --glow:rgba(240,174,72,.6); --muted:#8FA1A3; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);
+  padding-inline:16px;box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+main{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;min-height:0}
+#stage{width:min(78vmin,560px);max-width:100%;aspect-ratio:1;touch-action:none;display:block;overflow:visible}
+h1{margin:0;font-size:clamp(1.9rem,6vmin,3.2rem);font-weight:700;letter-spacing:-.01em;text-align:center}
+.claim{margin:-.6rem 0 0;color:var(--teal);font-size:clamp(.95rem,2.6vmin,1.25rem);text-align:center}
+.claim span{display:inline-block;opacity:.35;transition:opacity .8s}
+.claim span.on{opacity:1}
+#c3{font-weight:700;opacity:0}
+#c3.on{opacity:1}
+.claim .fly{text-shadow:0 0 6px var(--sun),0 0 16px var(--sun)}
+.hint{margin:0;color:var(--muted);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;transition:opacity .6s}
+.hint.gone{opacity:0}
+footer{display:flex;justify-content:center;gap:1.2rem;padding-block:1rem 1.2rem;font-size:.78rem}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover,footer a:focus-visible{color:var(--ink);text-decoration:underline}
+#core{cursor:pointer;outline:none}
+#core:focus-visible .disc{stroke:var(--sun);stroke-width:3}
+.sun{fill:var(--sun)}
+.halo{fill:none;stroke:var(--glow);stroke-width:6;opacity:0;transform-box:fill-box;transform-origin:center}
+.lit .halo{animation:halo 1.6s ease-out}
+@keyframes halo{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.4)}}
+@media (prefers-reduced-motion:reduce){.lit .halo{animation:none;opacity:.6}}
+
+body{margin:0}
+.screen{min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
+.info{position:relative;z-index:1;max-width:30rem;margin:0 auto;padding-block:2.5rem;color:var(--muted);font-size:.78rem;line-height:1.6;text-align:center;scroll-margin-top:1rem}
+.info h2{margin:0 0 .8rem;font-size:.9rem;font-weight:700;color:var(--muted)}
+.info p{margin:0 0 .8rem}
+.info a{color:var(--muted);text-decoration:underline}
+.info a:hover,.info a:focus-visible{color:var(--ink)}
+#privacy{padding-bottom:4rem}
+</style>
 </head>
 <body>
-    <h1>...coming soon...</h1>
+
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="screen">
+<main>
+  <svg id="stage" viewBox="-170 -170 340 340" role="img"
+       aria-label="JamboGarden – Vision. Solution.. it flies! Logo: a single sun in the focus of a teal core, just off centre and about to lift off, surrounded by orbits.">
+    <defs>
+      <radialGradient id="sg" cx="35%" cy="30%" r="75%">
+        <stop id="s0" offset="0"/><stop id="s1" offset=".55"/><stop id="s2" offset="1"/>
+      </radialGradient>
+      <radialGradient id="gg"><stop id="g0" offset=".35"/><stop id="g1" offset="1" stop-opacity="0"/></radialGradient>
+    </defs>
+    <g id="r1"><path id="p1" fill="none" stroke="var(--orbit)" stroke-width="5" stroke-linecap="round"/></g>
+    <g id="r2"><path id="p2" fill="none" stroke="var(--sun)" stroke-width="8" stroke-linecap="round"/></g>
+    <g id="r3">
+      <path id="p3" fill="none" stroke="var(--orbit)" stroke-width="3" stroke-linecap="round"/>
+      <path id="p4" fill="none" stroke="var(--sun)" stroke-width="6" stroke-linecap="round"/>
+    </g>
+    <g id="sats"></g>
+    <g id="core" tabindex="0" role="button" aria-label="it flies – activate the core">
+      <circle class="halo" r="40"/>
+      <circle class="disc" r="40" fill="var(--core)"/>
+      <g id="glow" opacity="0"><circle r="22" fill="url(#gg)"/></g>
+      <circle class="sun" id="sun" r="11"/>
+    </g>
+  </svg>
+  <h1>JamboGarden</h1>
+  <p class="claim"><span id="c1">Vision.</span> <span id="c2">Solution..</span> <span id="c3">it flies!</span></p>
+  <p class="hint" id="hint">Click the core</p>
+</main>
+<footer><a href="#legal">Legal</a><a href="#privacy">Privacy</a></footer>
+</div>
+<section class="info" id="legal">
+  <h2>Legal notice</h2>
+  <p>JamboGarden is a private project of<br>Joachim Nagelmann<br>Diani Beach Road<br>Diani Beach, Ukunda 80401<br>Kenya</p>
+  <p>Email: <a href="mailto:info@jambogarden.com">info@jambogarden.com</a></p>
+  <p>Responsible for the content: Joachim Nagelmann, address as above.</p>
+</section>
+<section class="info" id="privacy">
+  <h2>Privacy</h2>
+  <p>This website does not use cookies, tracking, analytics or any external services. We do not collect any personal data ourselves.</p>
+  <p>Hosting: This website is hosted on GitHub Pages by GitHub, Inc., USA. When you visit the site, GitHub processes technical access data such as your IP address in server log files in order to deliver the website and keep it secure. The legal basis is our legitimate interest in a secure and reliable website (Art. 6(1)(f) GDPR). Details: GitHub General Privacy Statement (link below).</p>
+  <p>Email: If you write to us, we use your message only to reply to you.</p>
+  <p>Your rights: You have the right to access, rectification, erasure and restriction of processing of your personal data, and the right to lodge a complaint with a data protection supervisory authority. Contact: <a href="mailto:info@jambogarden.com">info@jambogarden.com</a></p>
+  <p><a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub General Privacy Statement</a></p>
+</section>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id), NS="http://www.w3.org/2000/svg";
+const arc=(r,a0,a1)=>{const p=a=>[r*Math.cos(a*Math.PI/180),r*Math.sin(a*Math.PI/180)];
+  const[x0,y0]=p(a0),[x1,y1]=p(a1);return`M${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 ${((a1-a0+360)%360)>180?1:0} 1 ${x1.toFixed(1)},${y1.toFixed(1)}`};
+$("p1").setAttribute("d",arc(92,250,555));
+$("p2").setAttribute("d",arc(114,-135,-62));
+$("p3").setAttribute("d",arc(138,15,262));
+$("p4").setAttribute("d",arc(138,-50,0));
+
+const rings=[{el:$("r1"),spd:6,k:.10,d:3},{el:$("r2"),spd:-10,k:.18,d:6},{el:$("r3"),spd:3.2,k:.26,d:10}];
+rings.forEach(r=>r.a=0);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)");
+let CALM=reduce.matches;
+let tx=0,ty=0,cx=0,cy=0,boost=0,last=0,raf=0,dragging=false;
+const stage=$("stage"),core=$("core");
+const touch=matchMedia("(pointer: coarse)").matches;$("hint").textContent=(touch?"Tap":"Click")+" the core";
+
+function aim(e){const b=stage.getBoundingClientRect();
+  const x=(e.clientX-b.left)/b.width*2-1,y=(e.clientY-b.top)/b.height*2-1;
+  const m=Math.hypot(x,y),s=m>1.6?1.6/m:1;tx=x*s;ty=y*s}
+addEventListener("pointermove",e=>{if(e.pointerType==="mouse"||dragging)aim(e)});
+document.addEventListener("pointerleave",()=>{tx=ty=0});
+stage.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse"){dragging=true;aim(e)}});
+addEventListener("pointerup",()=>{if(dragging){dragging=false;tx=ty=0}});
+addEventListener("pointercancel",()=>{dragging=false;tx=ty=0});
+
+const BX=11,BY=-8;
+const ARCS=[[92,250,555,5,0],[114,-135,-62,8,1],[138,15,262,3,2],[138,-50,0,6,2]].map(([R,a0,a1,w,ri])=>{
+  const r0=a0*Math.PI/180,r1=a1*Math.PI/180,k=w/R;
+  return {x:k*(Math.sin(r1)-Math.sin(r0)),y:-k*(Math.cos(r1)-Math.cos(r0)),ri}});
+function pull(){let gx=0,gy=0;for(const a of ARCS){const t=rings[a.ri].a*Math.PI/180,c=Math.cos(t),sn=Math.sin(t);gx+=a.x*c-a.y*sn;gy+=a.x*sn+a.y*c}return[gx,gy]}
+const G0=pull(),G0L=Math.hypot(G0[0],G0[1])||1,GA=1.3*1.5;
+let ox=0,oy=0;
+const MAX=5,sunEl=$("sun"),halo=document.querySelector(".halo");
+let level=0,e=0,idle=0,clock=0;
+const hex=h=>{h=h.replace("#","");return[0,2,4].map(i=>parseInt(h.substr(i,2),16))};
+const mix=(a,b,u)=>a.map((v,i)=>Math.round(v+(b[i]-v)*u));
+const rgb=c=>`rgb(${c[0]},${c[1]},${c[2]})`;
+const HOT=hex("#F2712B"),FIRE=hex("#E2261B");
+let BASE,painted=-1;
+function readTheme(){BASE=hex(getComputedStyle(document.documentElement).getPropertyValue("--sun").trim()||"#E8A33D");painted=-1}
+readTheme();matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",readTheme);
+new MutationObserver(readTheme).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+function heatArr(u){const base=BASE;
+  return u<.5?mix(base,HOT,u*2):mix(HOT,FIRE,(u-.5)*2)}
+const heat=u=>rgb(heatArr(u));
+const glowG=$("glow"),stops=["s0","s1","s2"].map($),gstops=[$("g0"),$("g1")];
+function paintSuns(force){if(!force&&Math.abs(e-painted)<.004)return;painted=e;const base=heatArr(e),c=rgb(base),g=Math.max(0,Math.min(1,(e-.25)/.6));
+  stops[0].setAttribute("stop-color",rgb(mix(base,[255,246,220],.7*g)));
+  stops[1].setAttribute("stop-color",c);
+  stops[2].setAttribute("stop-color",rgb(mix(base,[90,8,0],.55*g)));
+  sunEl.style.fill=g>0?"url(#sg)":c;
+  const gc=rgb(mix(base,[255,60,20],g*.5));gstops.forEach(x=>x.setAttribute("stop-color",gc));glowG.setAttribute("opacity",(g*.9).toFixed(2));
+  halo.style.stroke=c}
+function meter(){const h=$("hint");h.textContent="Energy "+"●".repeat(level)+"○".repeat(MAX-level);h.classList.remove("gone")}
+function placeSun(){sunEl.setAttribute("transform",`translate(${BX} ${BY})`);glowG.setAttribute("transform",`translate(${BX} ${BY})`)}
+placeSun();
+
+let restSkip=false;
+function draw(t){
+  const rest=fl.t<0&&level===0&&e<.01&&!fliers.length&&!parts.length&&!dirty&&boost<.01&&Math.abs(tx-cx)+Math.abs(ty-cy)<.002;
+  const dt=Math.min(.05,(t-(last||t))/1000);last=t;clock+=dt;
+  cx+=(tx-cx)*Math.min(1,dt*4);cy+=(ty-cy)*Math.min(1,dt*4);
+  boost*=Math.pow(.25,dt);
+  if(fl.t<0&&level>0&&(idle+=dt)>8){idle=6;level--;if(level)meter();else{$("hint").classList.add("gone");resetClaim()}}
+  e+=(level/MAX-e)*Math.min(1,dt*5);if(fl.t>=0)e=1;
+  paintSuns();
+  const m=Math.min(1,Math.hypot(cx,cy)),th=Math.atan2(cy,cx)*180/Math.PI;
+  if(!CALM)for(const r of rings){
+    r.a=(r.a+r.spd*(1+e*4+boost*6)*dt)%360;
+    const k=1-r.k*m,ox=cx*r.d,oy=cy*r.d;
+    r.el.setAttribute("transform",`translate(${ox.toFixed(2)} ${oy.toFixed(2)}) rotate(${th.toFixed(2)}) scale(${k.toFixed(4)} 1) rotate(${(-th).toFixed(2)}) rotate(${r.a.toFixed(2)})`);
+  }
+  const [gx,gy]=pull();
+  let txo=(gx-G0[0])/G0L*GA,tyo=(gy-G0[1])/G0L*GA;
+  const px=BX+txo,py=BY+tyo,pr=Math.hypot(px,py);if(pr>24){txo=px*24/pr-BX;tyo=py*24/pr-BY}
+  const sm=Math.min(1,dt*1.2);ox+=(txo-ox)*sm;oy+=(tyo-oy)*sm;
+  const live=CALM?0:1,w=clock*(4+e*12),j=e*e*1.6*live,home=1-e,ps=(1+.3*e)*(1+.06*e*live*Math.sin(w));
+  const sx=(BX+ox)*home+(Math.random()-.5)*j,sy=(BY+oy)*home+(Math.random()-.5)*j;
+  const tf=`translate(${sx.toFixed(2)} ${sy.toFixed(2)}) scale(${ps.toFixed(3)})`;
+  sunEl.setAttribute("transform",tf);glowG.setAttribute("transform",tf+` scale(${(1+.12*Math.sin(w*1.6)).toFixed(3)})`);
+  sat.step(dt);fl.step(dt);
+  raf=requestAnimationFrame(draw);
+}
+
+const satsG=$("sats"),fliers=[];
+const sat={launch(off=0){if(CALM)return;const g=document.createElementNS(NS,"g"),c=heat(e),dots=[];
+    for(let i=0;i<4;i++){const d=document.createElementNS(NS,"circle");d.setAttribute("r",(6-i*1.2).toFixed(1));
+      d.setAttribute("fill",c);d.setAttribute("opacity",(1-i*.22).toFixed(2));g.appendChild(d);dots.push(d)}
+    satsG.appendChild(g);fliers.push({g,dots,t:0,a0:rings[2].a+off,hist:[]})},
+  step(dt){for(let k=fliers.length-1;k>=0;k--){const f=fliers[k];f.t+=dt;const u=Math.min(1,f.t/2.4),q=u*u;
+      const a=(f.a0+u*200)*Math.PI/180,rad=138+q*170;
+      f.hist.unshift([rad*Math.cos(a),rad*Math.sin(a)]);f.hist.length=Math.min(f.hist.length,13);
+      f.dots.forEach((d,i)=>{const p=f.hist[Math.min(i*4,f.hist.length-1)];d.setAttribute("cx",p[0].toFixed(1));d.setAttribute("cy",p[1].toFixed(1))});
+      f.g.setAttribute("opacity",(1-Math.max(0,(u-.55)/.45)).toFixed(2));
+      if(u>=1){f.g.remove();fliers.splice(k,1)}}}};
+
+const fx=$("fx"),ctx=fx.getContext("2d"),parts=[];let dirty=false;
+function fit(){const r=devicePixelRatio||1;fx.width=innerWidth*r;fx.height=innerHeight*r;ctx.setTransform(r,0,0,r,0,0)}
+fit();addEventListener("resize",fit);
+const ease={in:u=>u*u*u,back:u=>1+2.2*Math.pow(u-1,3)+1.2*Math.pow(u-1,2)};
+const fl={t:-1,
+  n:0,mode:"up",
+  go(){this.t=0;this.mode=CALM?"calm":"dive";this.puffed=false;$("hint").classList.add("gone");[0,120,240].forEach(o=>sat.launch(o))},
+  step(dt){
+    if(this.t>=0){
+      this.t+=dt;const t=this.t,H=innerHeight+stage.getBoundingClientRect().height;let y=0,jx=0,jy=0,sc=1;
+      let rot=0,op=1;
+      if(this.mode==="calm"){
+        if(t<1.2){}
+        else if(t<1.9){op=1-(t-1.2)/.7}
+        else if(t<2.0){op=0;if(!this.puffed){this.puffed=true;vanish=null;reveal(2)}}
+        else if(t<2.8){op=(t-2.0)/.8}
+        else{this.t=-1;landed()}}
+      else if(t<.8){const a=4*t/.8;jx=(Math.random()-.5)*a;jy=(Math.random()-.5)*a;emit(1,.4)}
+      else if(this.mode==="up"){
+        if(t<1.75){const u=(t-.55)/1.2;y=-H*ease.in(u);sc=1-.12*u;emit(4,1)}
+        else if(t<2.05){y=H}
+        else if(t<3.45){const u=(t-2.05)/1.4;y=H*(1-ease.back(u))}
+        else{this.t=-1;landed()}}
+      else{
+        if(t<3.0){const u=(t-.8)/2.2;sc=Math.max(.02,1-(1-Math.pow(1-u,2.2))*.98);rot=u*u*160;y=-u*40}
+        else if(t<3.7){sc=.02;op=0;if(!this.puffed){this.puffed=true;const r=stage.getBoundingClientRect();vanish=[r.left+r.width/2,r.top+r.height/2];puff();reveal(2)}}
+        else if(t<4.6){const u=(t-3.7)/.9;sc=Math.max(.02,ease.back(u))}
+        else{this.t=-1;landed()}}
+      boost=Math.max(boost,t<3?1:.3);
+      stage.style.transform=this.t<0?"":`translate(${jx.toFixed(1)}px,${(y+jy).toFixed(1)}px) scale(${sc.toFixed(3)}) rotate(${rot.toFixed(1)}deg)`;stage.style.opacity=this.t<0?"":op;
+    }
+    if(!parts.length){if(dirty){ctx.clearRect(0,0,innerWidth,innerHeight);dirty=false}return}
+    ctx.clearRect(0,0,innerWidth,innerHeight);dirty=true;ctx.fillStyle=heat(e);
+    for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.l-=dt;if(p.l<=0){parts.splice(i,1);continue}
+      p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=p.dr||1;p.vy*=p.dr||.985;ctx.globalAlpha=Math.max(0,p.l/p.L)*.85;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r*(.4+.6*p.l/p.L),0,7);ctx.fill()}
+    ctx.globalAlpha=1}};
+function emit(n,f){const b=core.getBoundingClientRect();if(b.bottom<-40)return;
+  for(let i=0;i<n;i++){const L=.5+Math.random()*.7;
+    parts.push({x:b.left+b.width*(.25+Math.random()*.5),y:b.bottom-b.height*.15,vx:(Math.random()-.5)*60*f,vy:(140+Math.random()*160)*f,r:(3+Math.random()*5)*(b.width/90),l:L,L})}}
+function puff(){const b=stage.getBoundingClientRect(),x=b.left+b.width/2,y=b.top+b.height/2,u=b.width/340;
+  for(let i=0;i<70;i++){const a=Math.random()*6.283,v=(80+Math.random()*260)*u,L=.8+Math.random()*.7;
+    parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,dr:.95,r:(3+Math.random()*7)*u*1.8,l:L,L})}}
+function landed(){level=0;const h=$("hint");h.textContent=(touch?"Tap":"Click")+" the core";h.classList.remove("gone")}
+
+const claimEl=[$("c1"),$("c2"),$("c3")];
+let claimFull=false;
+let lastSide=-1;
+function edgePoint(){let side;do side=Math.floor(Math.random()*4);while(side===lastSide);lastSide=side;
+  const W=innerWidth,H=innerHeight,r=Math.random();
+  return side===0?[r*W,-30]:side===1?[W+40,r*H]:side===2?[r*W,H+30]:[-40,r*H]}
+const FLY_MS=4400,FLIES_MS=3800;
+function flyIn(el){
+  const b=el.getBoundingClientRect(),ex=b.left+b.width/2,ey=b.top+b.height/2,W=innerWidth,H=innerHeight;
+  const [sx,sy]=edgePoint(),mx=W*(.2+Math.random()*.6),my=H*(.15+Math.random()*.45);
+  const T=(x,y,s)=>`translate(${(x-ex).toFixed(0)}px,${(y-ey).toFixed(0)}px) scale(${s})`;
+  el.classList.add("fly");
+  el.animate([{transform:T(sx,sy,.7),opacity:0},{transform:T((sx+mx)/2,(sy+my)/2,1.1),opacity:1,offset:.25},
+    {transform:T(mx,my,1.35),offset:.5},{transform:T((mx+ex)/2,(my+ey)/2-40,1.15),offset:.75},
+    {transform:"translate(0,-6px) scale(1.04)",offset:.92},{transform:"none",opacity:1}],
+    {duration:FLY_MS,easing:"cubic-bezier(.35,.05,.35,1)"}).onfinish=()=>el.classList.remove("fly")}
+let vanish=null;
+function reveal(i){const el=claimEl[i];if(el.classList.contains("on"))return;el.classList.add("on");
+  if(i===2)claimFull=true;
+  if(reduce.matches||!el.animate)return;
+  if(i<2){flyIn(el);return}
+  const b=el.getBoundingClientRect(),ex=b.left+b.width/2,ey=b.top+b.height/2;
+  const [vx,vy]=vanish||[innerWidth/2,innerHeight/2];
+  const T=(x,y,s)=>`translate(${(x-ex).toFixed(0)}px,${(y-ey).toFixed(0)}px) scale(${s})`;
+  el.classList.add("fly");
+  el.animate([{transform:T(vx,vy,.05),opacity:0},{transform:T(vx,vy,.6),opacity:1,offset:.12},
+    {transform:T(vx,vy,3.2),offset:.45},{transform:T(vx,(vy+ey)/2,1.6),offset:.7},
+    {transform:"scale(.94)",offset:.88},{transform:"none",opacity:1}],
+    {duration:FLIES_MS,easing:"cubic-bezier(.3,.1,.3,1)"}).onfinish=()=>el.classList.remove("fly")}
+function resetClaim(){claimFull=false;claimEl.forEach(el=>{el.classList.remove("on");el.getAnimations?.().forEach(x=>x.cancel())})}
+
+let litT=0;
+function flies(){
+  if(fl.t>=0)return;
+  if(claimFull&&level===0)resetClaim();
+  core.classList.remove("lit");void core.getBBox();core.classList.add("lit");
+  clearTimeout(litT);litT=setTimeout(()=>core.classList.remove("lit"),1600);
+  level=Math.min(MAX,level+1);idle=0;
+  if(level>=1)reveal(0);if(level>=2)reveal(1);
+  if(level>=MAX){fl.go()}else{boost=Math.max(boost,.6);sat.launch();meter()}
+}
+core.addEventListener("click",flies);
+core.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();flies()}});
+
+function start(){if(!raf&&!document.hidden){last=0;raf=requestAnimationFrame(draw)}}
+function stop(){cancelAnimationFrame(raf);raf=0}
+document.addEventListener("visibilitychange",()=>document.hidden?stop():start());
+reduce.addEventListener?.("change",()=>{CALM=reduce.matches;if(CALM)rings.forEach(r=>r.el.removeAttribute("transform"))});
+paintSuns(true);
+start();
+})();
+</script>
 </body>
 </html>
+
